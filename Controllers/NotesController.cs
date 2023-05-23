@@ -22,44 +22,44 @@ namespace MapNotesAPI.Controllers
 
         // GET: api/Notes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Note>>> GetNotes()
+        public async Task<ActionResult<IEnumerable<NotesTable>>> GetNotesTables()
         {
-          if (_context.Notes == null)
+          if (_context.NotesTables == null)
           {
               return NotFound();
           }
-            return await _context.Notes.ToListAsync();
+            return await _context.NotesTables.ToListAsync();
         }
 
         // GET: api/Notes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Note>> GetNote(Guid id)
+        public async Task<ActionResult<NotesTable>> GetNotesTable(int id)
         {
-          if (_context.Notes == null)
+          if (_context.NotesTables == null)
           {
               return NotFound();
           }
-            var note = await _context.Notes.FindAsync(id);
+            var notesTable = await _context.NotesTables.FindAsync(id);
 
-            if (note == null)
+            if (notesTable == null)
             {
                 return NotFound();
             }
 
-            return note;
+            return notesTable;
         }
 
         // PUT: api/Notes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNote(Guid id, Note note)
+        public async Task<IActionResult> PutNotesTable(int id, NotesTable notesTable)
         {
-            if (id != note.UserId)
+            if (id != notesTable.MessageId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(note).State = EntityState.Modified;
+            _context.Entry(notesTable).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +67,7 @@ namespace MapNotesAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!NoteExists(id))
+                if (!NotesTableExists(id))
                 {
                     return NotFound();
                 }
@@ -83,55 +83,41 @@ namespace MapNotesAPI.Controllers
         // POST: api/Notes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Note>> PostNote(Note note)
+        public async Task<ActionResult<NotesTable>> PostNotesTable(NotesTable notesTable)
         {
-          if (_context.Notes == null)
+          if (_context.NotesTables == null)
           {
-              return Problem("Entity set 'TestDbContext.Notes'  is null.");
+              return Problem("Entity set 'TestDbContext.NotesTables'  is null.");
           }
-            _context.Notes.Add(note);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (NoteExists(note.UserId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.NotesTables.Add(notesTable);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetNote", new { id = note.UserId }, note);
+            return CreatedAtAction("GetNotesTable", new { id = notesTable.MessageId }, notesTable);
         }
 
         // DELETE: api/Notes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote(Guid id)
+        public async Task<IActionResult> DeleteNotesTable(int id)
         {
-            if (_context.Notes == null)
+            if (_context.NotesTables == null)
             {
                 return NotFound();
             }
-            var note = await _context.Notes.FindAsync(id);
-            if (note == null)
+            var notesTable = await _context.NotesTables.FindAsync(id);
+            if (notesTable == null)
             {
                 return NotFound();
             }
 
-            _context.Notes.Remove(note);
+            _context.NotesTables.Remove(notesTable);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool NoteExists(Guid id)
+        private bool NotesTableExists(int id)
         {
-            return (_context.Notes?.Any(e => e.UserId == id)).GetValueOrDefault();
+            return (_context.NotesTables?.Any(e => e.MessageId == id)).GetValueOrDefault();
         }
     }
 }
