@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MapNotesAPI;
+﻿namespace MapNotesAPI;
 
 public partial class NotesTable
 {
@@ -13,3 +10,5 @@ public partial class NotesTable
 
     public string NotesText { get; set; } = null!;
 }
+
+

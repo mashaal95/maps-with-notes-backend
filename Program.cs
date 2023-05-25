@@ -1,5 +1,8 @@
 using MapNotesAPI;
 using Microsoft.EntityFrameworkCore;
+using MapNotesAPI.Interfaces;
+using MapNotesAPI.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TestDbContext>(option =>
     option.UseSqlServer("Name=ConnectionStrings:TestDb"));
+
+    // Register INotesRepo
+builder.Services.AddScoped<INotesRepository, NotesRepository>();
+
+    // Register IUserRepo
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

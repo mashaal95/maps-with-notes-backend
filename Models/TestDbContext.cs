@@ -30,7 +30,9 @@ public partial class TestDbContext : DbContext
 
             entity.ToTable("NotesTable");
 
-            entity.Property(e => e.MessageId).HasColumnName("message_id");
+            entity.Property(e => e.MessageId)
+            .ValueGeneratedOnAdd()
+            .HasColumnName("message_id");
             entity.Property(e => e.LocationName).HasColumnName("location_name");
             entity.Property(e => e.NotesText).HasColumnName("notes_text");
             entity.Property(e => e.UserId).HasColumnName("user_id");

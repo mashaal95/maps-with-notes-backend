@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MapNotesAPI;
+using MapNotesAPI.Interfaces;
 
 namespace MapNotesAPI.Controllers
 {
@@ -15,38 +16,58 @@ namespace MapNotesAPI.Controllers
     {
         private readonly TestDbContext _context;
 
-        public UserController(TestDbContext context)
+        private readonly IUserRepository _userRepository;
+
+        public UserController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
-        // GET: api/User
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserTable>>> GetUserTables()
-        {
-          if (_context.UserTables == null)
-          {
-              return NotFound();
-          }
-            return await _context.UserTables.ToListAsync();
-        }
+        // // GET: api/User
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<UserTable>>> GetUserTables()
+        // {
+        //   if (_context.UserTables == null)
+        //   {
+        //       return NotFound();
+        //   }
+        //     return await _context.UserTables.ToListAsync();
+        // }
 
         // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserTable>> GetUserTable(Guid id)
+        [HttpGet("{username}")]
+        public async Task<Guid> GetUserIdFromUsername(String username)
         {
-          if (_context.UserTables == null)
-          {
-              return NotFound();
-          }
-            var userTable = await _context.UserTables.FindAsync(id);
+        //   if (_context.UserTables == null)
+        //   {
+        //       return NotFound();
+        //   }
+            // var userTable = await _context.UserTables.FindAsync(id);
 
-            if (userTable == null)
+            // if (userTable == null)
+            // {
+            //     return NotFound();
+            // }
+            return await _userRepository.GetUserIdFromUsername(username);
+
+            // return userTable;
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login(String username, String password) {
+            
+            
+            var user = _userRepository.Login(username, password);
+
+            if ( user.Username != null)
             {
-                return NotFound();
+                return Ok();
+            }
+            else
+            {
+                return Conflict();
             }
 
-            return userTable;
         }
 
         // PUT: api/User/5

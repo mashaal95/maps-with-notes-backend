@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MapNotesAPI;
+using MapNotesAPI.Interfaces;
 
 namespace MapNotesAPI.Controllers
 {
@@ -15,30 +16,33 @@ namespace MapNotesAPI.Controllers
     {
         private readonly TestDbContext _context;
 
-        public NotesController(TestDbContext context)
+        private readonly INotesRepository _notesRepository;
+
+        public NotesController(INotesRepository notesRepository)
         {
-            _context = context;
+            _notesRepository = notesRepository;
         }
 
         // GET: api/Notes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<NotesTable>>> GetNotesTables()
+         [HttpPost]
+         [Route("locationName")]
+        public async Task<ActionResult<String>> GetNotesTables([FromBody] String locationName)
         {
-          if (_context.NotesTables == null)
-          {
-              return NotFound();
-          }
-            return await _context.NotesTables.ToListAsync();
+            //   if (_context.NotesTables == null)
+            //   {
+            //       return NotFound();
+            //   }
+            return await _notesRepository.GetAllNotesFromLocation(locationName);
         }
 
         // GET: api/Notes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<NotesTable>> GetNotesTable(int id)
         {
-          if (_context.NotesTables == null)
-          {
-              return NotFound();
-          }
+            if (_context.NotesTables == null)
+            {
+                return NotFound();
+            }
             var notesTable = await _context.NotesTables.FindAsync(id);
 
             if (notesTable == null)
@@ -85,13 +89,14 @@ namespace MapNotesAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<NotesTable>> PostNotesTable(NotesTable notesTable)
         {
-          if (_context.NotesTables == null)
-          {
-              return Problem("Entity set 'TestDbContext.NotesTables'  is null.");
-          }
-            _context.NotesTables.Add(notesTable);
-            await _context.SaveChangesAsync();
+            // if (_context.NotesTables == null)
+            // {
+            //     return Problem("Entity set 'TestDbContext.NotesTables'  is null.");
+            // }
 
+            // _context.NotesTables.Add(notesTable);
+            // await _context.SaveChangesAsync();
+            await _notesRepository.PostNotes(notesTable);
             return CreatedAtAction("GetNotesTable", new { id = notesTable.MessageId }, notesTable);
         }
 
